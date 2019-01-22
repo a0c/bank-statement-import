@@ -83,15 +83,15 @@ class AccountBankStatementImport(models.TransientModel):
     def unzip(self, data_file):
         filename = self.env.context.get('filename')
         if filename and filename.lower().endswith('.xlsx'):
-            return [data_file]
+            return [(filename, data_file)]
         try:
             with ZipFile(StringIO(data_file), 'r') as archive:
                 return [
-                    archive.read(name) for name in archive.namelist()
+                    (name, archive.read(name)) for name in archive.namelist()
                     if not name.endswith('/')
                     ]
         except BadZipfile:
-            return [data_file]
+            return [(filename, data_file)]
 
     @api.model
     def _parse_all_files(self, data_file):
@@ -102,12 +102,12 @@ class AccountBankStatementImport(models.TransientModel):
         statements = []
         files = self.unzip(data_file)
         # Parse the file(s)
-        for import_file in files:
+        for filename, import_file in files:
             # The appropriate implementation module(s) returns the statements.
             # Actually we don't care wether all the files have the same
             # format. Although unlikely you might mix mt940 and camt files
             # in one zipfile.
-            parse_result = self._parse_file(import_file)
+            parse_result = self.with_context(filename=filename)._parse_file(import_file)
             # Check for old version result, with separate currency and account
             if isinstance(parse_result, tuple) and len(parse_result) == 3:
                 (currency_code, account_number, new_statements) = parse_result

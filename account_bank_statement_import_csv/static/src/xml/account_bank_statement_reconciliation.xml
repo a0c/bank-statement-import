@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates id="template" xml:space="preserve">
+
+  <t t-extend="bank_statement_nothing_to_reconcile">
+    <t t-jquery="div[class='oe_form_sheet oe_form_sheet_width']" t-operation="attributes">
+      <attribute name="style">max-width: 950px;</attribute>
+    </t>
+  </t>
+  <t t-extend="bank_statement_reconciliation">
+    <t t-jquery="div[class='oe_form_sheet oe_form_sheet_width']" t-operation="attributes">
+      <attribute name="style">max-width: 950px;</attribute>
+    </t>
+  </t>
+
+</templates>

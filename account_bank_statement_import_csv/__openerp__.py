@@ -13,6 +13,15 @@ Import CSV Bank Statement
     'depends': [
         'account_bank_statement_import'
     ],
+    'data': [
+        'views/account_bank_statement_import_view.xml',
+        'views/account_bank_statement_import_csv_format.xml',
+        'security/ir.model.access.csv',
+        'data/csv_format.xml',
+    ],
+    'qweb': [
+        'static/src/xml/account_bank_statement_reconciliation.xml',
+    ],
     'auto_install': False,
     'installable': True,
 }

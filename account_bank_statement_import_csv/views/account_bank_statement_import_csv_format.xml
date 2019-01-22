@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<openerp>
+  <data>
+
+    <record id="view_bank_statement_import_csv_format_list" model="ir.ui.view">
+      <field name="name">account.bank.statement.import.csv.format.list</field>
+      <field name="model">account.bank.statement.import.csv.format</field>
+      <field name="arch" type="xml">
+        <tree string="CSV Format">
+          <field name="name"/>
+          <field name="account_number"/>
+          <field name="match_condition"/>
+          <field name="skip_condition"/>
+        </tree>
+      </field>
+    </record>
+    <record id="view_bank_statement_import_csv_format_form" model="ir.ui.view">
+      <field name="name">account.bank.statement.import.csv.format.form</field>
+      <field name="model">account.bank.statement.import.csv.format</field>
+      <field name="arch" type="xml">
+        <form string="CSV Format">
+          <sheet class="oe_form_sheet_width_widest">
+            <h1>
+              <field name="name"/>
+            </h1>
+            <group col="4">
+              <group colspan="3">
+                <group string="Required Columns">
+                  <field name="account_number"/>
+                  <field name="currency_code"/>
+                  <field name="date"/>
+                  <field name="payee"/>
+                  <field name="memo"/>
+                  <field name="amount"/>
+                </group>
+                <group string="Optional Columns">
+                  <field name="payee_account_number"/>
+                  <field name="drcr"/>
+                  <field name="ref"/>
+                  <field name="doc_nr"/>
+                  <field name="archive_id"/>
+                  <field name="tx_type"/>
+                  <field name="tx_type_balance_start"/>
+                  <field name="tx_type_balance_end"/>
+                  <field name="tx_type_turnover"/>
+                </group>
+                <group string="Other Config" colspan="4">
+                  <field name="date_format"/>
+                  <field name="match_condition"/>
+                  <field name="skip_condition"/>
+                </group>
+              </group>
+              <group colspan="1" string="Header">
+                <field name="header" nolabel="1" colspan="2"/>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+    <record id="action_bank_statement_import_csv_format" model="ir.actions.act_window">
+      <field name="name">Bank Statement Import CSV Format</field>
+      <field name="res_model">account.bank.statement.import.csv.format</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem name="CSV Format of Bank Stmt Import" id="menu_bank_statement_import_csv_format" sequence="50"
+              action="action_bank_statement_import_csv_format" parent="account.menu_configuration_misc"
+              groups="account.group_account_manager"/>
+
+  </data>
+</openerp>

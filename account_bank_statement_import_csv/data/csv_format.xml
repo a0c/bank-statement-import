@@ -1,0 +1,257 @@
+<?xml version="1.0"?>
+<openerp>
+  <data noupdate="1">
+
+    <record id="bank_stmt_import_csv_swedbank_en" model="account.bank.statement.import.csv.format">
+      <field name="name">Swedbank EN</field>
+      <field name="account_number">Client account</field>
+      <field name="currency_code">Currency</field>
+      <field name="date">Date</field>
+      <field name="payee">Beneficiary/Payer</field>
+      <field name="payee_account_number"></field>
+      <field name="memo">Details</field>
+      <field name="drcr">Debit/Credit</field>
+      <field name="amount">Amount</field>
+      <field name="ref">Reference number</field>
+      <field name="archive_id">Transfer reference</field>
+      <field name="tx_type">Transaction type</field>
+      <field name="tx_type_balance_start">AS</field>
+      <field name="tx_type_balance_end">LS</field>
+      <field name="tx_type_turnover">K2</field>
+      <field name="doc_nr">Document number</field>
+      <field name="match_condition">csv_header[0] == self.account_number</field>
+      <field name="date_format">%d-%m-%Y</field>
+    </record>
+    <record id="bank_stmt_import_csv_swedbank_ru" model="account.bank.statement.import.csv.format">
+      <field name="name">Swedbank RU</field>
+      <field name="account_number">Счëт клиентa</field>
+      <field name="currency_code">Currency</field>
+      <field name="date">Дата</field>
+      <field name="payee">Получатель/Плательщик</field>
+      <field name="payee_account_number"></field>
+      <field name="memo">Пояснение</field>
+      <field name="drcr">Дебит/Кредит</field>
+      <field name="amount">Сумма</field>
+      <field name="ref">Номер ссылки</field>
+      <field name="archive_id">Архивный признак</field>
+      <field name="tx_type">Тип сделки</field>
+      <field name="tx_type_balance_start">AS</field>
+      <field name="tx_type_balance_end">LS</field>
+      <field name="tx_type_turnover">K2</field>
+      <field name="doc_nr">Номер документа</field>
+      <field name="match_condition">csv_header[0] == self.account_number</field>
+      <field name="date_format">%d-%m-%Y</field>
+    </record>
+    <record id="bank_stmt_import_csv_swedbank_ee" model="account.bank.statement.import.csv.format">
+      <field name="name">Swedbank EE</field>
+      <field name="account_number">Kliendi konto</field>
+      <field name="currency_code">VALUUTA TÄHIS</field>
+      <field name="date">Makse kuupäev</field>
+      <field name="payee">Saaja/maksja nimi</field>
+      <field name="payee_account_number">Saaja/maksja konto</field>
+      <field name="memo">Selgitus</field>
+      <field name="drcr">Deebet/Kreedit (D/C)</field>
+      <field name="amount">Summa</field>
+      <field name="ref">Viitenumber</field>
+      <field name="archive_id">Arhiveerimistunnus</field>
+      <field name="tx_type">Tühi (ei kasutata)</field>
+      <field name="tx_type_balance_start">AS</field>
+      <field name="tx_type_balance_end">LS</field>
+      <field name="tx_type_turnover">K2</field>
+      <field name="doc_nr">Dok nr</field>
+      <field name="match_condition">csv_header[0] == self.account_number and u'VALUUTA TÄHIS' in csv_header</field>
+      <field name="date_format">%d-%m-%Y</field>
+    </record>
+    <record id="bank_stmt_import_csv_swedbank_no_header" model="account.bank.statement.import.csv.format">
+      <field name="name">Swedbank No Header</field>
+      <field name="account_number">Client account</field>
+      <field name="currency_code">Currency</field>
+      <field name="date">Date</field>
+      <field name="payee">Beneficiary/Payer</field>
+      <field name="payee_account_number">Beneficiary/Payer's Account</field>
+      <field name="memo">Details</field>
+      <field name="drcr">Debit/Credit</field>
+      <field name="amount">Amount</field>
+      <field name="ref">Reference number</field>
+      <field name="archive_id">Transfer reference</field>
+      <field name="tx_type">Transaction type</field>
+      <field name="tx_type_balance_start">AS</field>
+      <field name="tx_type_balance_end">LS</field>
+      <field name="tx_type_turnover">K2</field>
+      <field name="doc_nr">Document number</field>
+      <field name="match_condition">filename_has('statement') and line.get(self.drcr) in ('C', 'D') and '-' in line.get(self.date)</field>
+      <field name="date_format">%d-%m-%Y</field>
+      <field name="header">Client account
+Document number
+Date
+Beneficiary/Payer's Account
+Beneficiary/Payer
+Beneficiary/Payer's Bank
+Transaction type
+Debit/Credit
+Amount
+Reference number
+Transfer reference
+Details
+Commission fee
+Currency
+ID code/Registry code</field>
+    </record>
+
+    <record id="bank_stmt_import_csv_seb_en" model="account.bank.statement.import.csv.format">
+      <field name="name">SEB EN</field>
+      <field name="account_number">Account</field>
+      <field name="currency_code">Currency</field>
+      <field name="date">Date</field>
+      <field name="payee">Beneficiary's name</field>
+      <field name="payee_account_number">Beneficiary's account</field>
+      <field name="memo">Description</field>
+      <field name="drcr">(D/C)</field>
+      <field name="amount">Amount</field>
+      <field name="ref">Reference no.</field>
+      <field name="archive_id">Archive ID</field>
+      <field name="tx_type">Type</field>
+      <field name="tx_type_balance_start">AS</field>
+      <field name="tx_type_balance_end">LS</field>
+      <field name="tx_type_turnover">K2</field>
+      <field name="doc_nr">Document No.</field>
+      <field name="match_condition">csv_header[0] == self.account_number</field>
+      <field name="date_format">%d-%m-%Y</field>
+    </record>
+    <record id="bank_stmt_import_csv_seb_ru" model="account.bank.statement.import.csv.format">
+      <field name="name">SEB RU</field>
+      <field name="account_number">Название счета</field>
+      <field name="currency_code">Валюта</field>
+      <field name="date">Дата</field>
+      <field name="payee">Наименование получателя</field>
+      <field name="payee_account_number">Счёт получателя</field>
+      <field name="memo">Описание</field>
+      <field name="drcr">(D/C)</field>
+      <field name="amount">Сумма</field>
+      <field name="ref">Номер ссылки</field>
+      <field name="archive_id">Признак архивации</field>
+      <field name="tx_type">тип</field>
+      <field name="tx_type_balance_start">AS</field>
+      <field name="tx_type_balance_end">LS</field>
+      <field name="tx_type_turnover">K2</field>
+      <field name="doc_nr">Номер документа</field>
+      <field name="match_condition">csv_header[0] == self.account_number</field>
+      <field name="date_format">%d-%m-%Y</field>
+    </record>
+    <record id="bank_stmt_import_csv_seb_ee" model="account.bank.statement.import.csv.format">
+      <field name="name">SEB EE</field>
+      <field name="account_number">Kliendi konto</field>
+      <field name="currency_code">Valuuta</field>
+      <field name="date">Kuupäev</field>
+      <field name="payee">Saaja/maksja nimi</field>
+      <field name="payee_account_number">Saaja/maksja konto</field>
+      <field name="memo">Selgitus</field>
+      <field name="drcr">Deebet/Kreedit (D/C)</field>
+      <field name="amount">Summa</field>
+      <field name="ref">Viitenumber</field>
+      <field name="archive_id">Arhiveerimistunnus</field>
+      <field name="tx_type">Tüüp</field>
+      <field name="tx_type_balance_start">AS</field>
+      <field name="tx_type_balance_end">LS</field>
+      <field name="tx_type_turnover">K2</field>
+      <field name="doc_nr">Dokumendi number</field>
+      <field name="match_condition">csv_header[0] == self.account_number and u'Valuuta' in csv_header</field>
+      <field name="date_format">%d-%m-%Y</field>
+    </record>
+    <record id="bank_stmt_import_csv_seb_no_header" model="account.bank.statement.import.csv.format">
+      <field name="name">SEB No Header</field>
+      <field name="account_number">Client account</field>
+      <field name="currency_code">Currency</field>
+      <field name="date">Date</field>
+      <field name="payee">Beneficiary/Payer</field>
+      <field name="payee_account_number">Beneficiary/Payer's Account</field>
+      <field name="memo">Details</field>
+      <field name="drcr">Debit/Credit</field>
+      <field name="amount">Amount</field>
+      <field name="ref">Reference number</field>
+      <field name="archive_id">Transfer reference</field>
+      <field name="tx_type">Transaction type</field>
+      <field name="tx_type_balance_start">AS</field>
+      <field name="tx_type_balance_end">LS</field>
+      <field name="tx_type_turnover">K2</field>
+      <field name="doc_nr">Document number</field>
+      <field name="match_condition">filename_has('kontovv', 'SEB') and line.get(self.drcr) in ('C', 'D') and '.' in line.get(self.date)</field>
+      <field name="date_format">%d.%m.%Y</field>
+      <field name="header">Client account
+Document number
+Date
+Beneficiary/Payer's Account
+Beneficiary/Payer
+Beneficiary/Payer's Bank
+Transaction type
+Debit/Credit
+Amount
+Reference number
+Transfer reference
+Details
+Commission fee
+Currency
+ID code/Registry code</field>
+    </record>
+
+    <record id="bank_stmt_import_csv_commerzbank" model="account.bank.statement.import.csv.format">
+      <field name="name">COMMERZBANK</field>
+      <field name="account_number">"DE83" + Bank label + Account number</field>
+      <field name="currency_code">Original currency</field>
+      <field name="date">Value date</field>
+      <field name="payee">Originator 1 + Originator 2</field>
+      <field name="payee_account_number">Originator's account</field>
+      <field name="memo">Purpose 1 + Purpose 2 + Purpose 3 + Purpose 4 + Purpose 5 + Purpose 6 + Purpose 7 + Purpose 8 + Purpose 9 + Purpose 10 + Purpose 11 + Purpose 12 + Purpose 13 + Purpose 14</field>
+      <field name="drcr"></field>
+      <field name="amount">Amount</field>
+      <field name="ref"></field>
+      <field name="archive_id"></field>
+      <field name="tx_type">Business event code (BEC)</field>
+      <field name="tx_type_balance_start"></field>
+      <field name="tx_type_balance_end"></field>
+      <field name="tx_type_turnover"></field>
+      <field name="doc_nr">Statement number</field>
+      <field name="match_condition">filename_has('UMSATZ')</field>
+      <field name="skip_condition">filename_has('AUSZUG')</field>
+      <field name="date_format">%d.%m.%y</field>
+      <field name="header">Bank label
+Account number
+Statement number
+Value date
+Prima nota
+Purpose 1
+Booking text
+Time
+Text key
+Cheque number
+Amount
+Number of bulk
+Number of corollaries
+Booking date
+Additional information 1
+Additional information 2
+Purpose 2
+Purpose 3
+Purpose 4
+Purpose 5
+Purpose 6
+Purpose 7
+Purpose 8
+Purpose 9
+Purpose 10
+Purpose 11
+Purpose 12
+Purpose 13
+Purpose 14
+Originator 1
+Originator 2
+Originator bank
+Originator's account
+Business event code (BEC)
+Cancelation key
+Original currency
+Dummy 1</field>
+    </record>
+
+  </data>
+</openerp>

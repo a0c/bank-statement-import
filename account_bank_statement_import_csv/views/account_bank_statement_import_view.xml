@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<openerp>
+  <data>
+
+    <record id="account_bank_statement_import_view" model="ir.ui.view">
+      <field name="name">Import Bank Statements</field>
+      <field name="model">account.bank.statement.import</field>
+      <field name="inherit_id" ref="account_bank_statement_import.account_bank_statement_import_view"/>
+      <field name="arch" type="xml">
+        <field name="hide_journal_field" position="after">
+          <group col="3">
+            <group colspan="2">
+              <field name="note" nolabel="1" attrs="{'invisible': [('note','=',False)]}" style="color: blue;"/>
+              <field name="csv_formats" invisible="1"/>
+            </group>
+            <group colspan="1">
+              <button name="action_ambiguous_csv_formats" string="Edit Ambiguous CSV Formats"
+                      type="object" attrs="{'invisible': [('csv_formats','in',[False, '[]'])]}"/>
+              <button name="action_ambiguous_csv_formats" string="Edit CSV Formats"
+                      type="object" attrs="{'invisible': [('csv_formats','!=','[]')]}"/>
+            </group>
+          </group>
+        </field>
+      </field>
+    </record>
+
+  </data>
+</openerp>
