@@ -253,5 +253,43 @@ Original currency
 Dummy 1</field>
     </record>
 
+    <record id="bank_stmt_import_csv_coop_no_header" model="account.bank.statement.import.csv.format">
+      <field name="name">COOP No Header</field>
+      <field name="account_number">Client account</field>
+      <field name="currency_code">Currency</field>
+      <field name="date">Date</field>
+      <field name="payee">Beneficiary/Payer</field>
+      <field name="payee_account_number">Beneficiary/Payer's Account</field>
+      <field name="memo">Details</field>
+      <field name="drcr"></field>
+      <field name="amount">Amount</field>
+      <field name="ref">Reference number</field>
+      <field name="archive_id">Transfer reference</field>
+      <field name="tx_type">Transaction type</field>
+      <field name="tx_type_balance_start">AS</field>
+      <field name="tx_type_balance_end">LS</field>
+      <field name="tx_type_turnover">K2</field>
+      <field name="doc_nr">Document number</field>
+      <field name="match_condition">filename_has('statement', 'valjavote') and '.' in line.get(self.date) and is_hex(line.get(self.archive_id))</field>
+      <field name="date_format">%d.%m.%Y</field>
+      <field name="delimiter">,</field>
+      <field name="header">Client account
+Document number
+Date
+Beneficiary/Payer's Account
+Beneficiary/Payer
+Beneficiary/Payer's Bank
+Transaction type
+Transaction type description
+Amount
+Reference number
+Transfer reference
+Details
+Commission fee
+Currency
+Dummy 1
+Dummy 2</field>
+    </record>
+
   </data>
 </openerp>

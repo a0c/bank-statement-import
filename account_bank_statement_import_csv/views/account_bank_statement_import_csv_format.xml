@@ -45,6 +45,7 @@
                   <field name="tx_type_turnover"/>
                 </group>
                 <group string="Other Config" colspan="4">
+                  <field name="delimiter"/>
                   <field name="date_format"/>
                   <field name="match_condition"/>
                   <field name="skip_condition"/>

@@ -21,7 +21,11 @@ def is_csv(filename):
 
 def read_csv(data_file, csv_format=None):
     fieldnames = csv_format and csv_format.header and csv_format.header.split('\n') or None
-    return csv.DictReader(StringIO(data_file), fieldnames=fieldnames, delimiter=';')
+    delimiter = csv_format and str(csv_format.delimiter) or ';'
+    res = csv.DictReader(StringIO(data_file), fieldnames=fieldnames, delimiter=delimiter)
+    if len(res.fieldnames) == 1:  # try comma delimiter (COOP)
+        res = csv.DictReader(StringIO(data_file), fieldnames=fieldnames, delimiter=',')
+    return res
 
 
 def get_csv_header_and_first_line(data_file, csv_format):
@@ -98,7 +102,10 @@ class AccountBankStatementImport(models.TransientModel):
     def find_matched_csv_format(self, data_file):
         filename = self.env.context.get('filename')
         if is_csv(filename):
-            data_file = data_file.decode("utf-8-sig").encode("utf-8")  # get rid of BOM in SEB EE
+            try:
+                data_file = data_file.decode("utf-8-sig").encode("utf-8")  # get rid of BOM in SEB EE
+            except UnicodeDecodeError:  # COOP is in ISO-8859 encoding
+                data_file = data_file.decode("iso-8859-1").encode("utf-8")  # get rid of BOM in SEB EE
             all_csv_formats = self.env['account.bank.statement.import.csv.format'].search([])
             csv_formats = all_csv_formats.matches(data_file)  # find all csv_formats that match: e.g. only accept UMSATZ.txt from ZIP file
             if len(csv_formats) == 1:
@@ -239,6 +246,7 @@ class AccountBankStatementImportCSVFormat(models.Model):
     skip_condition = fields.Char('File Skip Condition')
 
     date_format = fields.Char('Date Format', required=1)
+    delimiter = fields.Selection([(',', 'Comma'), (';', 'Semicolon'), ('\t', 'Tab'), (' ', 'Space')], default=';')
 
     @api.constrains('header')
     def _validate_header(self):
@@ -263,6 +271,13 @@ class AccountBankStatementImportCSVFormat(models.Model):
         filename = self.env.context.get('filename')
         return filename and any(name in filename for name in names)
 
+    def is_hex(self, line):
+        try:
+            int(line, 16)
+            return True
+        except ValueError:
+            return False
+
     def matches(self, data_file):
         num_cols_csv = len(read_csv(data_file).fieldnames)  # first, read CSV without csv_format (header) - just to count columns
 
@@ -273,7 +288,8 @@ class AccountBankStatementImportCSVFormat(models.Model):
             # re-reading allows referencing cells by column names in match_condition in case when x.header is set, e.g. "line.get(self.drcr) in ('C', 'D')"
             return bool(safe_eval(x.match_condition, locals_dict={
                 'self': x, 'csv_header': csv_header, 'line': line, 'header': x.header,
-                'filename_has': x.filename_has, 'filename': x.env.context.get('filename')}))
+                'filename_has': x.filename_has, 'filename': x.env.context.get('filename'),
+                'is_hex': x.is_hex}))
 
         return self.filtered(match)
 
