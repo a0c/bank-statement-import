@@ -155,7 +155,7 @@ ID code/Registry code</field>
       <field name="tx_type_balance_end">LS</field>
       <field name="tx_type_turnover">K2</field>
       <field name="doc_nr">Dokumendi number</field>
-      <field name="match_condition">csv_header[0] == self.account_number and u'Valuuta' in csv_header</field>
+      <field name="match_condition">csv_header[0] == self.account_number and u'Valuuta' in csv_header and not is_hex(line.get(self.archive_id))</field>
       <field name="date_format">%d-%m-%Y</field>
     </record>
     <record id="bank_stmt_import_csv_seb_no_header" model="account.bank.statement.import.csv.format">
@@ -253,6 +253,46 @@ Original currency
 Dummy 1</field>
     </record>
 
+    <record id="bank_stmt_import_csv_coop_ru" model="account.bank.statement.import.csv.format">
+      <field name="name">COOP RU</field>
+      <field name="account_number">Счет клиента</field>
+      <field name="currency_code">Валюта</field>
+      <field name="date">Дата</field>
+      <field name="payee">Имя получателя/плательщика</field>
+      <field name="payee_account_number">Счет получателя/плательщика</field>
+      <field name="memo">Информация</field>
+      <field name="drcr">Дебет/Кредит</field>
+      <field name="amount">Сумма</field>
+      <field name="ref">Ссылка</field>
+      <field name="archive_id">Признак архивирования</field>
+      <field name="tx_type">тип</field>
+      <field name="tx_type_balance_start">AS</field>
+      <field name="tx_type_balance_end">LS</field>
+      <field name="tx_type_turnover">K2</field>
+      <field name="doc_nr">Номер документа</field>
+      <field name="match_condition">csv_header[0] == self.account_number and u'Имя клиента' in csv_header</field>
+      <field name="date_format">%d.%m.%Y</field>
+    </record>
+    <record id="bank_stmt_import_csv_coop_ee" model="account.bank.statement.import.csv.format">
+      <field name="name">COOP EE</field>
+      <field name="account_number">Kliendi konto</field>
+      <field name="currency_code">Valuuta</field>
+      <field name="date">Kuupäev</field>
+      <field name="payee">Saaja/maksja nimi</field>
+      <field name="payee_account_number">Saaja/maksja konto</field>
+      <field name="memo">Selgitus</field>
+      <field name="drcr">Deebet/Kreedit</field>
+      <field name="amount">Summa</field>
+      <field name="ref">Viitenumber</field>
+      <field name="archive_id">Arhiveerimistunnus</field>
+      <field name="tx_type">Tüüp</field>
+      <field name="tx_type_balance_start">AS</field>
+      <field name="tx_type_balance_end">LS</field>
+      <field name="tx_type_turnover">K2</field>
+      <field name="doc_nr">Dokumendi number</field>
+      <field name="match_condition">csv_header[0] == self.account_number and u'Kliendi nimi' in csv_header and is_hex(line.get(self.archive_id))</field>
+      <field name="date_format">%d.%m.%Y</field>
+    </record>
     <record id="bank_stmt_import_csv_coop_no_header" model="account.bank.statement.import.csv.format">
       <field name="name">COOP No Header</field>
       <field name="account_number">Client account</field>
