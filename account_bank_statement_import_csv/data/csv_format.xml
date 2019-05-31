@@ -261,7 +261,7 @@ Dummy 1</field>
       <field name="payee">Имя получателя/плательщика</field>
       <field name="payee_account_number">Счет получателя/плательщика</field>
       <field name="memo">Информация</field>
-      <field name="drcr">Дебет/Кредит</field>
+      <field name="drcr"></field>
       <field name="amount">Сумма</field>
       <field name="ref">Ссылка</field>
       <field name="archive_id">Признак архивирования</field>
@@ -281,7 +281,7 @@ Dummy 1</field>
       <field name="payee">Saaja/maksja nimi</field>
       <field name="payee_account_number">Saaja/maksja konto</field>
       <field name="memo">Selgitus</field>
-      <field name="drcr">Deebet/Kreedit</field>
+      <field name="drcr"></field>
       <field name="amount">Summa</field>
       <field name="ref">Viitenumber</field>
       <field name="archive_id">Arhiveerimistunnus</field>
