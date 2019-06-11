@@ -43,6 +43,8 @@
                   <field name="tx_type_balance_start"/>
                   <field name="tx_type_balance_end"/>
                   <field name="tx_type_turnover"/>
+                  <field name="payer"/>
+                  <field name="payer_account_number"/>
                 </group>
                 <group string="Other Config" colspan="4">
                   <field name="delimiter"/>

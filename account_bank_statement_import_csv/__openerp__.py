@@ -13,6 +13,7 @@ Import CSV Bank Statement
     'depends': [
         'account_bank_statement_import'
     ],
+    'external_dependencies': {'python': ['chardet']},
     'data': [
         'views/account_bank_statement_import_view.xml',
         'views/account_bank_statement_import_csv_format.xml',

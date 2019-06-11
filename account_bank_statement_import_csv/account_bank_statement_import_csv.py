@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import chardet
 import csv
 import json
 from datetime import datetime
@@ -99,13 +100,21 @@ class AccountBankStatementImport(models.TransientModel):
         return self.action_view('account_bank_statement_import.account_bank_statement_import_view',
                                 'account_bank_statement_import.action_account_bank_statement_import')
 
+    def decode_data_file(self, data_file):
+        """ utf-8-sig:    get rid of BOM in SEB EE
+            iso-8859-1:   COOP is in ISO-8859 encoding """
+        detected_encoding = chardet.detect(data_file)
+        for encoding in filter(None, (detected_encoding['encoding'], "utf-8-sig", "iso-8859-1")):
+            try:
+                return data_file.decode(encoding).encode("utf-8")
+            except UnicodeDecodeError:
+                pass
+        raise Warning('Unknown Encoding', 'File encoding could not be determined')
+
     def find_matched_csv_format(self, data_file):
         filename = self.env.context.get('filename')
         if is_csv(filename):
-            try:
-                data_file = data_file.decode("utf-8-sig").encode("utf-8")  # get rid of BOM in SEB EE
-            except UnicodeDecodeError:  # COOP is in ISO-8859 encoding
-                data_file = data_file.decode("iso-8859-1").encode("utf-8")  # get rid of BOM in SEB EE
+            data_file = self.decode_data_file(data_file)
             all_csv_formats = self.env['account.bank.statement.import.csv.format'].search([])
             csv_formats = all_csv_formats.matches(data_file)  # find all csv_formats that match: e.g. only accept UMSATZ.txt from ZIP file
             if len(csv_formats) == 1:
@@ -139,6 +148,10 @@ class AccountBankStatementImport(models.TransientModel):
         try:
             for transaction in csv:
                 def val(col): return value_of(col, transaction)
+                # skip header line with human-readable column names (e.g. Alfa-Bank)
+                if len(val(fmt.drcr)) > 1:
+                    continue
+
                 account_number = fmt.parse_account_number(val, account_number)
                 currency_code = fmt.parse_currency_code(val, currency_code)
 
@@ -147,7 +160,7 @@ class AccountBankStatementImport(models.TransientModel):
                 if is_loaded:
                     continue
 
-                payee, memo = fmt.parse_payee(val), fmt.parse_memo(val)
+                (payee, payee_acc_nr), memo = fmt.parse_payee(val, amount), fmt.parse_memo(val)
 
                 # If bank doesn't provide account numbers, we'll have
                 # to find res.partner and res.partner.bank here
@@ -171,7 +184,6 @@ class AccountBankStatementImport(models.TransientModel):
                     'partner_name': payee,
                 }
                 # 'account_number' will be used for creating res.partner.bank if not found above (bank_account_id)
-                payee_acc_nr = val(fmt.payee_account_number)
                 if payee_acc_nr:
                     vals_line['account_number'] = payee_acc_nr
                 # Memo, reference and payee are not required fields in
@@ -231,6 +243,9 @@ class AccountBankStatementImportCSVFormat(models.Model):
     date = fields.Char(required=1)
     payee = fields.Char('Beneficiary/Payer', required=1)
     payee_account_number = fields.Char("Beneficiary/Payer's Account")
+    payer = fields.Char('Payer', help="If Beneficiary and Payer are split into different columns, type Payer column "
+                                      "here and Credit transactions will use it instead of Beneficiary/Payer column")
+    payer_account_number = fields.Char("Payer's Account")
     memo = fields.Char('Details/Memo', required=1)
     drcr = fields.Char('Debit/Credit')
     amount = fields.Char(required=1)
@@ -322,8 +337,12 @@ class AccountBankStatementImportCSVFormat(models.Model):
             return amount
         return abs(amount) * (-1.00 if drcr == 'D' else 1)  # abs(): SWEDBANK sends both +-amounts and drcr
 
-    def parse_payee(self, val):
-        return val(self.payee).lstrip("'")
+    def parse_payee(self, val, amount):
+        if self.payer and amount > 0:  # drcr == 'C'
+            col, col_nr = self.payer, self.payer_account_number
+        else:
+            col, col_nr = self.payee, self.payee_account_number
+        return val(col).lstrip("'"), val(col_nr).lstrip("'")
 
     def parse_memo(self, val):
         return val(self.memo).lstrip("'")

@@ -331,5 +331,29 @@ Dummy 1
 Dummy 2</field>
     </record>
 
+    <record id="bank_stmt_import_csv_alfabank_ru" model="account.bank.statement.import.csv.format">
+      <field name="name">Alfa-Bank</field>
+      <field name="account_number">Rch</field>
+      <field name="currency_code">"RUB"</field>
+      <field name="date">date_oper</field>
+      <field name="payee">pol_name</field>
+      <field name="payee_account_number">pol_acc</field>
+      <field name="payer">plat_name</field>
+      <field name="payer_account_number">plat_acc</field>
+      <field name="memo">text70</field>
+      <field name="drcr">d_c</field>
+      <field name="amount">sum_val</field>
+      <field name="ref"></field>
+      <field name="archive_id"></field>
+      <field name="tx_type">тип</field>
+      <field name="tx_type_balance_start">AS</field>
+      <field name="tx_type_balance_end">LS</field>
+      <field name="tx_type_turnover">K2</field>
+      <field name="doc_nr">number</field>
+      <field name="match_condition">u'Rch' in csv_header</field>
+      <field name="date_format">%d.%m.%Y</field>
+      <field name="delimiter">&#009;</field>
+    </record>
+
   </data>
 </openerp>
