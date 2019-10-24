@@ -51,7 +51,7 @@ def encode_unicode(fieldnames):
     return [f and f.encode('utf-8') or f for f in fieldnames]
 
 
-RE_LITERAL = re.compile("""^["'](\w+)["']$""")
+RE_LITERAL = re.compile("""^["']([\w%]+)["']$""")
 
 
 def value_of(column, tx):
@@ -320,8 +320,16 @@ class AccountBankStatementImportCSVFormat(models.Model):
 
         return self.filtered(skip)
 
+    def resolve_account_number(self, account_number):
+        if '%' in account_number:
+            account_number = account_number.replace('%', '_')
+            bank_account = self.env['res.partner.bank'].search([('acc_number', 'like', account_number)], limit=1)
+            if bank_account:
+                account_number = bank_account.sanitized_acc_number
+        return account_number
+
     def parse_account_number(self, val, account_number):
-        return account_number or val(self.account_number).lstrip("'")
+        return account_number or self.resolve_account_number(val(self.account_number).lstrip("'"))
 
     def parse_currency_code(self, val, currency_code):
         return currency_code or val(self.currency_code)

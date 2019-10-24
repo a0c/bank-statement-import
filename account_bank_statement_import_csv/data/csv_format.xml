@@ -196,7 +196,7 @@ ID code/Registry code</field>
 
     <record id="bank_stmt_import_csv_commerzbank" model="account.bank.statement.import.csv.format">
       <field name="name">COMMERZBANK</field>
-      <field name="account_number">"DE83" + Bank label + Account number</field>
+      <field name="account_number">"DE%%" + Bank label + Account number</field>
       <field name="currency_code">Original currency</field>
       <field name="date">Value date</field>
       <field name="payee">Originator 1 + Originator 2</field>
