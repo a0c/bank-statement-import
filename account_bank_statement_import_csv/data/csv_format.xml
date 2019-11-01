@@ -214,6 +214,10 @@ ID code/Registry code</field>
       <field name="match_condition">filename_has('UMSATZ')</field>
       <field name="skip_condition">filename_has('AUSZUG')</field>
       <field name="date_format">%d.%m.%y</field>
+      <field name="balance_file">AUSZUG</field>
+      <field name="balance_date_idx">3</field>
+      <field name="balance_start_idx">5</field>
+      <field name="balance_end_idx">8</field>
       <field name="header">Bank label
 Account number
 Statement number

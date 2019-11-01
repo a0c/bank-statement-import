@@ -46,11 +46,17 @@
                   <field name="payer"/>
                   <field name="payer_account_number"/>
                 </group>
-                <group string="Other Config" colspan="4">
+                <group string="Other Config">
                   <field name="delimiter"/>
                   <field name="date_format"/>
                   <field name="match_condition"/>
                   <field name="skip_condition"/>
+                </group>
+                <group string="Balance File">
+                  <field name="balance_file"/>
+                  <field name="balance_date_idx" attrs="{'required': [('balance_file','!=',False)], 'invisible': [('balance_file','=',False)]}"/>
+                  <field name="balance_start_idx" attrs="{'required': [('balance_file','!=',False)], 'invisible': [('balance_file','=',False)]}"/>
+                  <field name="balance_end_idx" attrs="{'required': [('balance_file','!=',False)], 'invisible': [('balance_file','=',False)]}"/>
                 </group>
               </group>
               <group colspan="1" string="Header">
