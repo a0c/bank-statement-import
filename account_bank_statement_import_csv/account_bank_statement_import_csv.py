@@ -52,7 +52,7 @@ def encode_unicode(fieldnames):
     return [f and f.encode('utf-8') or f for f in fieldnames]
 
 
-RE_LITERAL = re.compile("""^["']([\w%]+)["']$""")
+RE_LITERAL = re.compile("""^["']([^"']+)["']$""")
 
 
 def value_of(column, tx):
@@ -63,7 +63,7 @@ def value_of(column, tx):
         if not col: continue
         match = RE_LITERAL.match(col)
         if match:
-            res.append(to_unicode(match.group(1).strip()))
+            res.append(to_unicode(match.group(1)))
         else:
             res.append(to_unicode(tx.get(col, '')))  # column can be missing in CSV
     return u''.join(res)
@@ -183,11 +183,15 @@ class AccountBankStatementImport(models.TransientModel):
                         bank_account_id = banks.id
                         partner_id = banks.partner_id.id
                 date, ref, archive_id = fmt.parse_date(val), val(fmt.ref), val(fmt.archive_id)
+                currency, amount_currency = val(fmt.currency), fmt.parse_amount_currency(val, amount)
+                currency_id = self.load_currency_id(currency, currency_code)
                 vals_line = {
                     'date': date,
                     'name': ': '.join(filter(None, (payee, memo or ref))),
                     'ref': ref,
                     'amount': amount,
+                    'amount_currency': currency_id and amount_currency,
+                    'currency_id': currency_id,
                     'unique_import_id': '%s-%s-%s-%s-%s' % (archive_id, payee, memo, date, amount),
                     'bank_account_id': bank_account_id,
                     'partner_id': partner_id,
@@ -236,6 +240,11 @@ class AccountBankStatementImport(models.TransientModel):
         # if no currency_code is provided, we'll use the company currency
         return self.env.user.company_id.currency_id.id
 
+    def load_currency_id(self, currency, currency_code):
+        if not currency or currency == currency_code:
+            return False
+        return self._find_currency_id(currency)
+
     @api.multi
     def action_ambiguous_csv_formats(self):
         csv_formats = self.env['account.bank.statement.import.csv.format'].browse(json.loads(self.csv_formats))
@@ -249,7 +258,12 @@ class AccountBankStatementImportCSVFormat(models.Model):
     name = fields.Char(required=1)
     header = fields.Text(help="If CSV file doesn't have a Header with column names, you need to set it here manually")
     account_number = fields.Char('Account', required=1)
-    currency_code = fields.Char('Currency', required=1)
+    currency_code = fields.Char('Currency', required=1, help='Currency of entire Bank Statement. Only used to check that'
+        ' Bank Statement currency is same as Journal currency or same as Company currency if Journal has no currency. '
+        'Normally, Currency column from Header is set here (to pick first line\'s Currency as Bank Statement currency). '
+        'Alternatively, constant currency like "EUR" can be set here (when lines in different currencies).')
+    currency = fields.Char('Original Currency', help='Secondary Currency on line')
+    amount_currency = fields.Char('Amount in Original Currency')
     date = fields.Char(required=1)
     payee = fields.Char('Beneficiary/Payer', required=1)
     payee_account_number = fields.Char("Beneficiary/Payer's Account")
@@ -359,6 +373,16 @@ class AccountBankStatementImportCSVFormat(models.Model):
         if not self.drcr:
             return amount
         return abs(amount) * (-1.00 if drcr == 'D' else 1)  # abs(): SWEDBANK sends both +-amounts and drcr
+
+    def parse_amount_currency(self, val, amount):
+        if not self.amount_currency:
+            return False
+        amount_currency = val(self.amount_currency)
+        if not amount_currency:
+            return False
+        amount_currency = float(amount_currency.replace(',', '.'))
+        if amount_currency < 0: raise Warning('Negative Amount in Original Currency is not supported')
+        return amount_currency * (-1.00 if amount < 0 else 1)
 
     def parse_payee(self, val, amount):
         if self.payer and amount > 0:  # drcr == 'C'

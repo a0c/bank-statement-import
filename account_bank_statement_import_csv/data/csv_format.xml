@@ -197,7 +197,9 @@ ID code/Registry code</field>
     <record id="bank_stmt_import_csv_commerzbank" model="account.bank.statement.import.csv.format">
       <field name="name">COMMERZBANK</field>
       <field name="account_number">"DE%%" + Bank label + Account number</field>
-      <field name="currency_code">Original currency</field>
+      <field name="currency_code">"EUR"</field>
+      <field name="currency">Original currency</field>
+      <field name="amount_currency">Amount in currency</field>
       <field name="date">Value date</field>
       <field name="payee">Originator 1 + Originator 2</field>
       <field name="payee_account_number">Originator's account</field>
@@ -254,7 +256,7 @@ Originator's account
 Business event code (BEC)
 Cancelation key
 Original currency
-Dummy 1</field>
+Amount in currency</field>
     </record>
 
     <record id="bank_stmt_import_csv_coop_ru" model="account.bank.statement.import.csv.format">

@@ -45,6 +45,8 @@
                   <field name="tx_type_turnover"/>
                   <field name="payer"/>
                   <field name="payer_account_number"/>
+                  <field name="currency"/>
+                  <field name="amount_currency"/>
                 </group>
                 <group string="Other Config">
                   <field name="delimiter"/>
