@@ -59,6 +59,7 @@
                   <field name="balance_date_idx" attrs="{'required': [('balance_file','!=',False)], 'invisible': [('balance_file','=',False)]}"/>
                   <field name="balance_start_idx" attrs="{'required': [('balance_file','!=',False)], 'invisible': [('balance_file','=',False)]}"/>
                   <field name="balance_end_idx" attrs="{'required': [('balance_file','!=',False)], 'invisible': [('balance_file','=',False)]}"/>
+                  <field name="balance_currency_code_idx" attrs="{'invisible': [('balance_file','=',False)]}"/>
                 </group>
               </group>
               <group colspan="1" string="Header">

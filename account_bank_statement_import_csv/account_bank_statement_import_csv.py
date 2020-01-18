@@ -80,6 +80,7 @@ class AccountBankStatementImport(models.TransientModel):
     csv_formats = fields.Char(readonly=1)
     balance_start = fields.Float()
     balance_end = fields.Float()
+    currency_code = fields.Char()
 
     @api.multi
     def import_file(self):
@@ -133,6 +134,7 @@ class AccountBankStatementImport(models.TransientModel):
                     if balance:
                         self.balance_start = balance[0]
                         self.balance_end = balance[1]
+                        self.currency_code = balance[2]
                     return [None], [None]  # skip file
                 raise Warning("No CSV Formats matched",
                               "File <b>%s</b> doesn't match any CSV Format. Please update <b>File Match Condition</b> "
@@ -152,9 +154,10 @@ class AccountBankStatementImport(models.TransientModel):
         transactions = []
         _logger.info('Importing Bank Statement using "%s" CSV Format' % fmt.name)
         fmt.validate_header_against_required_format_columns(csv.fieldnames)
-        account_number = currency_code = False
+        account_number = False
         balance_start = self.balance_start or False
         balance_end = self.balance_end or False
+        currency_code = self.currency_code or False
         try:
             for transaction in csv:
                 def val(col): return value_of(col, transaction)
@@ -291,6 +294,8 @@ class AccountBankStatementImportCSVFormat(models.Model):
     balance_date_idx = fields.Integer('Balance Date Column', help="Index of a column containing Date of the balance")
     balance_start_idx = fields.Integer('Starting Balance Column', help="Index of a column containing Starting Balance")
     balance_end_idx = fields.Integer('Ending Balance Column', help="Index of a column containing Ending Balance")
+    balance_currency_code_idx = fields.Char('Statement Currency Column',
+        help="Index of a column containing Statement Currency. Leave empty to use the default Currency column")
 
     @api.constrains('header')
     def _validate_header(self):
@@ -410,14 +415,17 @@ class AccountBankStatementImportCSVFormat(models.Model):
     def parse_balance_file(self, data_file):
         if self.balance_file and self.filename_has(self.balance_file):
             idx_date, idx_start, idx_end = self.balance_date_idx, self.balance_start_idx, self.balance_end_idx
+            idx_currency_code = self.balance_currency_code_idx
             data = [(datetime.strptime(line[idx_date], self.date_format).strftime(DEFAULT_SERVER_DATE_FORMAT),
                      float(line[idx_start].replace(',', '.')),
-                     float(line[idx_end].replace(',', '.')))
+                     float(line[idx_end].replace(',', '.')),
+                     idx_currency_code and line[int(idx_currency_code)])
                     for line in csv.reader(StringIO(data_file), delimiter=str(self.delimiter) or ';')]
             if not data:
                 return False
             data.sort(key=itemgetter(0))
             balance_start = data[0][1]
             balance_end = data[-1][2]
-            return balance_start, balance_end
+            currency_code = data[0][3]
+            return balance_start, balance_end, currency_code
         return False
