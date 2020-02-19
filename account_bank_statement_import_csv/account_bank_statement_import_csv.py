@@ -82,6 +82,23 @@ class AccountBankStatementImport(models.TransientModel):
     balance_end = fields.Float()
     currency_code = fields.Char()
 
+    @api.model
+    def _find_bank_account_id(self, account_number):
+        """ Get res.partner.bank ID: override to take journal_id into account, cos
+            we can have bank accounts with same number but with different currency """
+        bank_account_id = None
+        if account_number and len(account_number) > 4:
+            args = [('acc_number', '=', account_number)]
+            journal_id = self.env.context.get('journal_id') or self.journal_id.id
+            if journal_id:  # try searching by journal too
+                args += [('journal_id', '=', journal_id)]
+            bank_account_ids = self.env['res.partner.bank'].search(args, limit=1)
+            if not bank_account_ids and len(args) > 1:  # back to search by acc_number only
+                bank_account_ids = self.env['res.partner.bank'].search(args[:1], limit=1)
+            if bank_account_ids:
+                bank_account_id = bank_account_ids[0].id
+        return bank_account_id
+
     @api.multi
     def import_file(self):
         try:
