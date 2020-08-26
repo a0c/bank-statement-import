@@ -97,7 +97,21 @@ class AccountBankStatementImport(models.TransientModel):
                 bank_account_ids = self.env['res.partner.bank'].search(args[:1], limit=1)
             if bank_account_ids:
                 bank_account_id = bank_account_ids[0].id
+                _logger.info('Found bank account by "%s", journal_id=%s: #%s' % (account_number, journal_id, bank_account_id))
         return bank_account_id
+
+    @api.model
+    def _get_journal(self, currency_id, bank_account_id):
+        """ override to increase error verbosity """
+        try:
+            return super(AccountBankStatementImport, self)._get_journal(currency_id, bank_account_id)
+        except Warning, e:
+            if e.message == _('The account of this statement is linked to '
+                              'another journal.'):
+                bank_account = self.env['res.partner.bank'].browse(bank_account_id)
+                e.args += ("Found Bank Account: #%s %s" % (bank_account.id, bank_account.acc_number),
+                           "You should probably create a new Bank Account linked to the journal you selected?")
+            raise
 
     @api.multi
     def import_file(self):
